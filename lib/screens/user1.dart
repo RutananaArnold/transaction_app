@@ -1,7 +1,12 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables
 
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:transaction_app/constants.dart';
 import 'package:transaction_app/widgets/wallet_element.dart';
+import 'package:http/http.dart' as http;
 
 class User1 extends StatefulWidget {
   User1({Key? key}) : super(key: key);
@@ -11,6 +16,10 @@ class User1 extends StatefulWidget {
 }
 
 class _User1State extends State<User1> {
+  final topupController = TextEditingController();
+  final withdrawController = TextEditingController();
+  final sendController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -56,8 +65,51 @@ class _User1State extends State<User1> {
                         WalletElement(
                             icon: Icons.add_box_rounded,
                             label: "Topup",
-                            tap: () {}),
-                            
+                            tap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    final size = MediaQuery.of(context).size;
+                                    return CupertinoAlertDialog(
+                                      content: StatefulBuilder(
+                                        builder: (context, setState) {
+                                          return SingleChildScrollView(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const SizedBox(
+                                                  height: 15,
+                                                ),
+                                                const Text(
+                                                    "Enter amount to top up"),
+                                                const SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Material(
+                                                  child: TextFormField(
+                                                    controller: topupController,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 10,
+                                                ),
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      topup_request(int.parse(
+                                                          topupController
+                                                              .text));
+                                                    },
+                                                    child: const Text("TOPUP"))
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  });
+                            }),
                         WalletElement(
                             icon: Icons.file_download_outlined,
                             label: "Withdraw",
@@ -74,7 +126,34 @@ class _User1State extends State<User1> {
     );
   }
 
-  topup_request(int amount){
-    
+  // transaction logic
+
+  _setHeaders() => {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        "Access-Control-Allow-Origin": "*",
+      };
+
+  topup_request(int amount) async {
+    Map data = {
+      "balance": amount,
+    };
+    print(data);
+
+    var jsonResponse;
+
+    var response = await http.post(
+      Uri.parse("http://" + apiUrl + "/api/user/topup/1"),
+      body: jsonEncode(data),
+      headers: _setHeaders(),
+    );
+    if (response.statusCode == 200) {
+      jsonResponse = json.decode(response.body);
+      if (jsonResponse != null) {
+        Navigator.pop(context);
+      }
+    } else {
+      jsonResponse = json.decode(response.body);
+    }
   }
 }
