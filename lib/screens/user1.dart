@@ -129,7 +129,7 @@ class _User1State extends State<User1> {
   // transaction logic
 
   _setHeaders() => {
-        'Content-type': 'application/json',
+        // 'Content-type': 'application/json',
         'Accept': 'application/json',
         "Access-Control-Allow-Origin": "*",
       };
@@ -142,13 +142,14 @@ class _User1State extends State<User1> {
 
     var jsonResponse;
 
-    var response = await http.post(
-      Uri.parse("http://" + apiUrl + "/api/user/topup/1"),
+    var response = await http.put(
+      Uri.parse("http://"+ apiUrl+"/api/user/topup/1"),
       body: jsonEncode(data),
       headers: _setHeaders(),
     );
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
+      print(jsonResponse);
       if (jsonResponse != null) {
         Navigator.pop(context);
       }
