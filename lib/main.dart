@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:transaction_app/screens/index.dart';
+import 'package:transaction_app/screens/register.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,7 +28,43 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const Index(),
+      home: Main(),
+    );
+  }
+}
+
+class Main extends StatefulWidget {
+  Main({Key? key}) : super(key: key);
+
+  @override
+  State<Main> createState() => _MainState();
+}
+
+class _MainState extends State<Main> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkLoginCredentials();
+  }
+
+  checkLoginCredentials() async {
+    final sharedPrefs = await SharedPreferences.getInstance();
+    if (sharedPrefs.getInt("userId") == null) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (BuildContext context) => Register()),
+          (Route<dynamic> route) => false);
+    } else {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (BuildContext context) => const Index()),
+          (Route<dynamic> route) => false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
     );
   }
 }

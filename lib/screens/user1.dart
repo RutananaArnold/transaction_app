@@ -8,6 +8,7 @@ import 'package:transaction_app/controllers/get_balance_controller.dart';
 import 'package:transaction_app/widgets/wallet_element.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
 import '../models/response_message.dart';
@@ -25,6 +26,8 @@ class _User1State extends State<User1> {
   final sendController = TextEditingController();
   final receiverController = TextEditingController();
   final BalanceController balanceController = Get.put(BalanceController());
+  // Obtain shared preferences.
+  late SharedPreferences sharedPrefs;
 
   @override
   void didChangeDependencies() {
@@ -126,6 +129,9 @@ class _User1State extends State<User1> {
                                                         topup_request(int.parse(
                                                             topupController
                                                                 .text));
+                                                        //update my balance
+                                                        balanceController
+                                                            .updateBalance();
                                                       },
                                                       child:
                                                           const Text("TOPUP"))
@@ -179,6 +185,9 @@ class _User1State extends State<User1> {
                                                             int.parse(
                                                                 withdrawController
                                                                     .text));
+                                                        //update my balance
+                                                        balanceController
+                                                            .updateBalance();
                                                       },
                                                       child: const Text(
                                                           "WITHDRAW"))
@@ -248,6 +257,9 @@ class _User1State extends State<User1> {
                                                                     .text),
                                                             receiverController
                                                                 .text);
+                                                        //update my balance
+                                                        balanceController
+                                                            .updateBalance();
                                                       },
                                                       child: const Text("SEND"))
                                                 ],
@@ -283,10 +295,12 @@ class _User1State extends State<User1> {
     };
     print(data);
 
+    sharedPrefs = await SharedPreferences.getInstance();
+    final int? userid = sharedPrefs.getInt('userId');
     var jsonResponse;
 
     var response = await http.put(
-      Uri.parse("http://" + apiUrl + "/topup/12"),
+      Uri.parse("http://" + apiUrl + "/topup/${userid}"),
       body: jsonEncode(data),
       headers: _setHeaders(),
     );
@@ -315,10 +329,12 @@ class _User1State extends State<User1> {
     };
     print(data);
 
+    sharedPrefs = await SharedPreferences.getInstance();
+    final int? userid = sharedPrefs.getInt('userId');
     var jsonResponse;
 
     var response = await http.put(
-      Uri.parse("http://" + apiUrl + "/withdraw/12"),
+      Uri.parse("http://" + apiUrl + "/withdraw/${userid}"),
       body: jsonEncode(data),
       headers: _setHeaders(),
     );
@@ -355,11 +371,14 @@ class _User1State extends State<User1> {
       "name": name,
     };
     print(data);
+    sharedPrefs = await SharedPreferences.getInstance();
+    final int? userid = sharedPrefs.getInt('userId');
 
     var jsonResponse;
 
     var response = await http.put(
-      Uri.parse("http://" + apiUrl + "/send/12/wafula"),
+      Uri.parse(
+          "http://" + apiUrl + "/send/${userid}/${receiverController.text}"),
       body: jsonEncode(data),
       headers: _setHeaders(),
     );
@@ -378,7 +397,7 @@ class _User1State extends State<User1> {
     } else {
       jsonResponse = json.decode(response.body);
       final snackBar = SnackBar(
-        content: Text(jsonResponse),
+        content: Text(jsonResponse.toString()),
       );
 
       // Find the ScaffoldMessenger in the widget tree

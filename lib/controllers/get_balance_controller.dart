@@ -2,6 +2,7 @@
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dart:convert';
 
@@ -9,6 +10,8 @@ import '../constants.dart';
 import '../models/userbalance.dart';
 
 class BalanceController extends GetxController {
+  // Obtain shared preferences.
+  late SharedPreferences sharedPrefs;
   int balance = 0;
 
   _setHeaders() => {
@@ -18,8 +21,12 @@ class BalanceController extends GetxController {
       };
 
   updateBalance() async {
+    sharedPrefs = await SharedPreferences.getInstance();
+    // Try reading data from the 'counter' key. If it doesn't exist, returns null.
+    final int? userid = sharedPrefs.getInt('userId');
+    print(userid);
     final response = await http.get(
-      Uri.parse("http://" + apiUrl + "/fetch/userBalance/12"),
+      Uri.parse("http://" + apiUrl + "/fetch/userBalance/${userid}"),
       headers: _setHeaders(),
     );
     if (response.statusCode == 200) {

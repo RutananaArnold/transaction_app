@@ -1,22 +1,22 @@
 // To parse this JSON data, do
 //
-//     final userBalance = userBalanceFromJson(jsonString);
+//     final idUser = idUserFromJson(jsonString);
 
+import 'package:meta/meta.dart';
 import 'dart:convert';
 
-UserBalance userBalanceFromJson(String str) => UserBalance.fromJson(json.decode(str));
+IdUser idUserFromJson(String str) => IdUser.fromJson(json.decode(str));
 
-String userBalanceToJson(UserBalance data) => json.encode(data.toJson());
+String idUserToJson(IdUser data) => json.encode(data.toJson());
 
-class UserBalance {
-    int? userId;
-
-    UserBalance({
-        this.userId,
+class IdUser {
+    IdUser({
+        required this.userId,
     });
 
+    final int userId;
 
-    factory UserBalance.fromJson(Map<String, dynamic> json) => UserBalance(
+    factory IdUser.fromJson(Map<String, dynamic> json) => IdUser(
         userId: json["user_id"],
     );
 

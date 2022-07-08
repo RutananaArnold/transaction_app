@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../constants.dart';
 import '../models/user_profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key? key}) : super(key: key);
@@ -21,8 +22,10 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<UserProfile> fetchUsers() async {
-    final response =
-        await http.get(Uri.parse("http://" + apiUrl + "/fetch/userProfile/12"));
+    final sharedPref = await SharedPreferences.getInstance();
+    final int? userid = sharedPref.getInt('userId');
+    final response = await http
+        .get(Uri.parse("http://" + apiUrl + "/fetch/userProfile/${userid}"));
     if (response.statusCode == 200) {
       return UserProfile.fromJson(jsonDecode(response.body));
     } else {
