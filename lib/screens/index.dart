@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:transaction_app/screens/user1.dart';
-import 'package:transaction_app/screens/user2.dart';
+import 'package:transaction_app/screens/profile.dart';
 
 class Index extends StatefulWidget {
   const Index({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class _IndexState extends State<Index> {
     });
   }
 
-  List<Widget> tabs = [User1(), User2()];
+  List<Widget> tabs = [User1(), Profile()];
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class _IndexState extends State<Index> {
               backgroundColor: Colors.green),
           BottomNavigationBarItem(
               icon: const Icon(Icons.person),
-              label: "User 2",
+              label: "Profile",
               backgroundColor: Colors.deepPurple[300]),
         ],
         onTap: onItemTapped,

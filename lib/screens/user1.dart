@@ -9,6 +9,9 @@ import 'package:transaction_app/widgets/wallet_element.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 
+import '../constants.dart';
+import '../models/response_message.dart';
+
 class User1 extends StatefulWidget {
   User1({Key? key}) : super(key: key);
 
@@ -20,7 +23,14 @@ class _User1State extends State<User1> {
   final topupController = TextEditingController();
   final withdrawController = TextEditingController();
   final sendController = TextEditingController();
+  final receiverController = TextEditingController();
   final BalanceController balanceController = Get.put(BalanceController());
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    balanceController.updateBalance();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +49,7 @@ class _User1State extends State<User1> {
             ),
             GetBuilder<BalanceController>(
               builder: (_) => Text(
-                balanceController.balance.toString(),
+                balanceController.getBalance().toString(),
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
@@ -113,8 +123,6 @@ class _User1State extends State<User1> {
                                                   ),
                                                   ElevatedButton(
                                                       onPressed: () {
-                                                        balanceController
-                                                            .updateBalance();
                                                         topup_request(int.parse(
                                                             topupController
                                                                 .text));
@@ -167,8 +175,6 @@ class _User1State extends State<User1> {
                                                   ),
                                                   ElevatedButton(
                                                       onPressed: () {
-                                                        balanceController
-                                                            .updateBalance();
                                                         withdraw_request(
                                                             int.parse(
                                                                 withdrawController
@@ -205,10 +211,15 @@ class _User1State extends State<User1> {
                                                     height: 15,
                                                   ),
                                                   const Text(
-                                                      "Enter amount to send"),
+                                                    "Enter amount to send",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
                                                   const SizedBox(
                                                     height: 10,
                                                   ),
+                                                  const Text("Amount"),
                                                   Material(
                                                     child: TextFormField(
                                                       controller:
@@ -217,16 +228,26 @@ class _User1State extends State<User1> {
                                                           TextInputType.number,
                                                     ),
                                                   ),
+                                                  const Text("Receiver Name"),
+                                                  Material(
+                                                    child: TextFormField(
+                                                      controller:
+                                                          receiverController,
+                                                      keyboardType:
+                                                          TextInputType.text,
+                                                    ),
+                                                  ),
                                                   const SizedBox(
                                                     height: 10,
                                                   ),
                                                   ElevatedButton(
                                                       onPressed: () {
-                                                        balanceController
-                                                            .updateBalance();
-                                                        send_request(int.parse(
-                                                            sendController
-                                                                .text));
+                                                        send_request(
+                                                            int.parse(
+                                                                sendController
+                                                                    .text),
+                                                            receiverController
+                                                                .text);
                                                       },
                                                       child: const Text("SEND"))
                                                 ],
@@ -265,7 +286,7 @@ class _User1State extends State<User1> {
     var jsonResponse;
 
     var response = await http.put(
-      Uri.parse("https://ve8yx5.deta.dev/api/user/topup/1"),
+      Uri.parse("http://" + apiUrl + "/topup/12"),
       body: jsonEncode(data),
       headers: _setHeaders(),
     );
@@ -297,25 +318,16 @@ class _User1State extends State<User1> {
     var jsonResponse;
 
     var response = await http.put(
-      Uri.parse("https://ve8yx5.deta.dev/api/user/withdraw/1"),
+      Uri.parse("http://" + apiUrl + "/withdraw/12"),
       body: jsonEncode(data),
       headers: _setHeaders(),
     );
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
       print(jsonResponse);
-      if (jsonResponse == null) {
+      if (jsonResponse != null) {
         final snackBar = SnackBar(
           content: Text('You have withdrawn ${withdrawController.text}'),
-        );
-
-        // Find the ScaffoldMessenger in the widget tree
-        // and use it to show a SnackBar.
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.pop(context);
-      } else {
-        final snackBar = SnackBar(
-          content: Text(jsonResponse),
         );
 
         // Find the ScaffoldMessenger in the widget tree
@@ -337,27 +349,27 @@ class _User1State extends State<User1> {
   }
 
 //sending logic
-  send_request(int amount) async {
+  send_request(int amount, String name) async {
     Map data = {
       "balance": amount,
+      "name": name,
     };
     print(data);
 
     var jsonResponse;
 
     var response = await http.put(
-      Uri.parse("https://ve8yx5.deta.dev/api/user/send/1/2"),
+      Uri.parse("http://" + apiUrl + "/send/12/wafula"),
       body: jsonEncode(data),
       headers: _setHeaders(),
     );
     if (response.statusCode == 200) {
-      jsonResponse = json.decode(response.body);
-      print(jsonResponse);
+      jsonResponse = MessageResponse.fromJson(jsonDecode(response.body));
+      print(jsonResponse.msg);
       if (jsonResponse != null) {
         final snackBar = SnackBar(
-          content: Text(jsonResponse),
+          content: Text(jsonResponse.msg),
         );
-
         // Find the ScaffoldMessenger in the widget tree
         // and use it to show a SnackBar.
         ScaffoldMessenger.of(context).showSnackBar(snackBar);

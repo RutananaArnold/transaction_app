@@ -1,1 +1,1 @@
-String apiUrl = "127.0.0.1:8000";
+String apiUrl = "localhost:8000";
