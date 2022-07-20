@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:transaction_app/screens/register.dart';
 
 import '../constants.dart';
 import '../models/user_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../widgets/rounded_button.dart';
 
 class Profile extends StatefulWidget {
   Profile({Key? key}) : super(key: key);
@@ -101,6 +104,20 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               const SizedBox(height: 10.0),
+              RoundedButton(
+                  text: "Log Out",
+                  press: () async {
+                    final sharedPref = await SharedPreferences.getInstance();
+                    final logout = sharedPref.clear();
+
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Register(),
+                        ),
+                        (route) => false);
+                  },
+                  color: Colors.red)
             ],
           );
         }
