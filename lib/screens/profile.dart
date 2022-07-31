@@ -103,6 +103,30 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
               ),
+              const Text(
+                "ACCOUNT NUMBER:",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 25,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Center(
+                  child: Text(
+                    snapshot.data!.accountNumber,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 17,
+                      letterSpacing: 0.5,
+                      fontWeight: FontWeight.w800,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 10.0),
               RoundedButton(
                   text: "Log Out",

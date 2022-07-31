@@ -16,6 +16,7 @@ class UserProfile {
     required this.email,
     required this.password,
     this.balance,
+    required this.accountNumber
   });
 
   int? id;
@@ -23,13 +24,15 @@ class UserProfile {
   String email;
   String password;
   int? balance;
+  String accountNumber;
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
         id: json["id"],
         name: json["name"],
         email: json["email"],
         password: json["password"],
-        balance: json["balance"],
+        balance: json["balance"], 
+        accountNumber: json["accountNumber"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -38,5 +41,6 @@ class UserProfile {
         "email": email,
         "password": password,
         "balance": balance,
+        "accountNumber": accountNumber,
       };
 }

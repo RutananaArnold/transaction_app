@@ -365,10 +365,10 @@ class _User1State extends State<User1> {
   }
 
 //sending logic
-  send_request(int amount, String name) async {
+  send_request(int amount, String accountNumber) async {
     Map data = {
       "balance": amount,
-      "name": name,
+      "accountNumber": accountNumber,
     };
     print(data);
     sharedPrefs = await SharedPreferences.getInstance();

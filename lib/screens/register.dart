@@ -60,7 +60,7 @@ class _RegisterState extends State<Register> {
                     registration(nameController.text, emailController.text,
                         passwordController.text);
                   },
-                  color: Color.fromARGB(255, 118, 224, 120))
+                  color: const Color.fromARGB(255, 118, 224, 120))
             ],
           ),
         ),
