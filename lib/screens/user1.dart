@@ -237,7 +237,8 @@ class _User1State extends State<User1> {
                                                           TextInputType.number,
                                                     ),
                                                   ),
-                                                  const Text("Receiver Name"),
+                                                  const Text(
+                                                      "Receiver Account Number"),
                                                   Material(
                                                     child: TextFormField(
                                                       controller:
